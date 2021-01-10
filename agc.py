@@ -258,21 +258,14 @@ def chimera_removal(amplicon_file, minseqlen, mincount, chunk_size, kmer_size):
     for seq in dfr_lst:
     	kmer_dict = get_kmer_dict(kmer_dict,seq[0],id,kmer_size)
     	id+=1
-    	print('/n STARTING NEW SEQUENCE /n')
-    	print(seq)
     perc_identity_matrix = []
 
     for l in dfr_lst2:
         chunks = get_chunks(l[0], chunk_size)
-        print("CHUNKSSSSSSSSSSSSSSSSSSSSSSS")
-        print(chunks)
         chunk_mates = []
         for seq in chunks:
             mates = search_mates(kmer_dict, seq, kmer_size)
             chunk_mates.append(mates)
-        print('/n CHUNK MATES: /n')
-        print(chunk_mates)
-
         if len(chunk_mates) > 1:
             for f in com[0:2]:
                 sequ = get_chunks(no_chimere[f], chunk_size)
@@ -282,8 +275,6 @@ def chimera_removal(amplicon_file, minseqlen, mincount, chunk_size, kmer_size):
                     identite =  get_identity(align)
                     perc_identity_matrix[k].append(identite)
             chimera = detect_chimera(perc_identity_matrix)
-            print("KURWA MAC")
-            print(perc_identity_matrix)
 
         if not detect_chimera(perc_identity_matrix):
             yield l
@@ -295,7 +286,7 @@ def abundance_greedy_clustering(amplicon_file, minseqlen, mincount, chunk_size, 
     """
     OTU = []
 
-    lst = [chimera_removal(amplicon_file, minseqlen, mincount, chunk_size, kmer_size)]
+    lst = chimera_removal(amplicon_file, minseqlen, mincount, chunk_size, kmer_size)
 
     for seq, count in lst:
         OTU.append([seq, count])
@@ -307,11 +298,7 @@ def fill(text, width=80):
     return os.linesep.join(text[i:i+width] for i in range(0, len(text), width))
 
 def write_OTU(OTU_list, output_file):
-    """
-    """
-    with open(output_file, "w") as f:
-        for i, o in enumerate(OTU_list):
-            f.write(">OTU_{"+str(i+1)+"} occurence:{"+str(o[1])+"}\n"+o[0])
+	pass
 
 
 #==============================================================
